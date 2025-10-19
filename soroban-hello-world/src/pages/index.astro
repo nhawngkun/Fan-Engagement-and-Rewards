@@ -1,1 +1,502 @@
-stellar keys address alice
+---
+---
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>NFT Royalties Dashboard</title>
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --primary-glow: #60a5fa;
+        --bg: #0f172a;
+        --card-bg: rgba(30, 41, 59, 0.7);
+        --text: #e2e8f0;
+        --text-muted: #94a3b8;
+        --border: rgba(148, 163, 184, 0.1);
+        --success: #22c55e;
+        --hover: #2563eb;
+      }
+      
+      body { 
+        font-family: system-ui, -apple-system, sans-serif;
+        padding: 32px;
+        margin: 0;
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+        background: 
+          radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 800px),
+          radial-gradient(circle at bottom left, rgba(37, 99, 235, 0.15), transparent 800px),
+          var(--bg);
+        overflow-x: hidden;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, var(--primary), var(--primary-glow));
+        -webkit-background-clip: text;
+        color: transparent;
+        position: relative;
+      }
+
+      h1::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin: 0 0 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      h2::before {
+        content: '';
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--primary);
+      }
+      label { 
+        display: block;
+        margin-top: 16px;
+        font-weight: 500;
+        color: var(--text);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      input {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-size: 1rem;
+        padding: 12px 16px;
+        border-radius: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+      }
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
+      button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.5s;
+      }
+
+      button:hover::before {
+        left: 100%;
+      }
+
+      button:hover {
+        background: var(--hover);
+        transform: translateY(-1px);
+      }
+      .row { 
+        display: flex; 
+        gap: 12px;
+      }
+      .col { flex: 1; }
+      .card { 
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        padding: 32px;
+        border-radius: 24px;
+        backdrop-filter: blur(12px);
+        box-shadow: 
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 0 rgba(148, 163, 184, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 24px;
+      }
+      
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04),
+          inset 0 1px 0 0 rgba(148, 163, 184, 0.1);
+      }
+      pre { 
+        background: var(--bg);
+        padding: 20px;
+        border-radius: 12px;
+        overflow: auto;
+        font-size: 14px;
+        border: 1px solid var(--border);
+      }
+      #registerResult {
+        margin-top: 16px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        background: #ecfdf5;
+        color: var(--success);
+        font-weight: 500;
+        animation: fadeIn 0.3s ease;
+      }
+      #computeResult {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+        border: 1px solid var(--border);
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .description {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 1rem 0 2rem;
+      }
+
+      /* Add new styles for the table */
+      .registry-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 0.95rem;
+        color: var(--text);
+      }
+      
+      .registry-table th,
+      .registry-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+      
+      .registry-table th {
+        font-weight: 600;
+        color: var(--primary-glow);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.8rem;
+      }
+
+      .action-btn {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        margin-right: 8px;
+        border-radius: 6px;
+      }
+
+      .action-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-1px);
+      }
+
+      .delete-btn {
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+
+      .delete-btn:hover {
+        background: #ef4444;
+        color: white;
+      }
+
+      .edit-form {
+        background: rgba(15, 23, 42, 0.8);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 16px;
+        border: 1px solid var(--border);
+      }
+
+      .form-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .form-row input {
+        flex: 1;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>NFT Royalties Dashboard</h1>
+    <p class="description">Quản lý và tính toán phí bản quyền cho NFT của bạn. Đăng ký token mới hoặc kiểm tra phí bản quyền cho các giao dịch.</p>
+
+    <div class="container">
+      <div class="card">
+        <h2>1. Đăng ký token (register)</h2>
+        <label>Token ID (hex / text)</label>
+        <input id="tokenId" placeholder="ví dụ: my-nft-001 hoặc hex..." />
+        <label>Creator ID (hex / text)</label>
+        <input id="creatorId" placeholder="ví dụ: GCREATOR...." />
+        <label>Royalty (bps) — basis points (100 = 1%)</label>
+        <input id="bps" type="number" min="0" max="10000" value="500" />
+        <button id="registerBtn">Register (mô phỏng)</button>
+        <div id="registerResult" style="margin-top:8px;color:green"></div>
+      </div>
+
+      <div class="card">
+        <h2>2. Tính phí bản quyền (compute_royalty)</h2>
+        <label>Token ID để tính</label>
+        <input id="tokenIdCompute" placeholder="same token id" />
+        <label>Giá bán (units, integer)</label>
+        <input id="price" type="number" value="1000000" />
+        <div class="row" style="margin-top:12px;">
+          <div class="col"><button id="computeBtn">Compute Royalty</button></div>
+          <div class="col"><button id="listBtn">Hiện danh sách đăng ký</button></div>
+        </div>
+        <div id="computeResult" style="margin-top:8px"></div>
+        <pre id="registryDump" style="display:none; margin-top:12px;"></pre>
+      </div>
+
+      <div class="card">
+        <h2>3. Danh sách đăng ký</h2>
+        <div id="editForm" class="edit-form" style="display: none;">
+          <div class="form-row">
+            <input id="oldTokenId" type="hidden" />
+            <input id="editTokenId" placeholder="Token ID mới" />
+            <input id="editCreatorId" placeholder="Creator ID" />
+            <input id="editBps" type="number" placeholder="BPS" min="0" max="10000" />
+          </div>
+          <div class="btn-group">
+            <button id="saveEditBtn">Lưu thay đổi</button>
+            <button id="cancelEditBtn" class="action-btn">Hủy</button>
+          </div>
+        </div>
+        
+        <table class="registry-table">
+          <thead>
+            <tr>
+              <th>Token ID</th>
+              <th>Creator</th>
+              <th>BPS</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="registryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script type="module">
+      // Mô phỏng storage bằng localStorage dưới key 'royalty_registry'
+      const STORAGE_KEY = 'royalty_registry';
+      function loadRegistry() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) { return {}; }
+      }
+      function saveRegistry(reg) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(reg));
+      }
+
+      // utils
+      function normalizeKey(s){ return String(s).trim(); }
+      function show(msg, el){ el.innerText = msg; }
+
+      // register
+      const registerBtn = document.getElementById('registerBtn');
+      const tokenId = document.getElementById('tokenId');
+      const creatorId = document.getElementById('creatorId');
+      const bpsInput = document.getElementById('bps');
+      const registerResult = document.getElementById('registerResult');
+
+      registerBtn.addEventListener('click', () => {
+        const t = normalizeKey(tokenId.value);
+        const c = normalizeKey(creatorId.value);
+        const bps = parseInt(bpsInput.value || '0', 10);
+        if (!t || !c || isNaN(bps)) {
+          show('Vui lòng nhập token, creator và bps hợp lệ.', registerResult);
+          return;
+        }
+        const reg = loadRegistry();
+        reg[t] = { creator: c, bps };
+        saveRegistry(reg);
+        show(`Đã đăng ký token='${t}' creator='${c}' bps=${bps}`, registerResult);
+      });
+
+      // compute
+      const computeBtn = document.getElementById('computeBtn');
+      const tokenIdCompute = document.getElementById('tokenIdCompute');
+      const priceInput = document.getElementById('price');
+      const computeResult = document.getElementById('computeResult');
+
+      computeBtn.addEventListener('click', () => {
+        const t = normalizeKey(tokenIdCompute.value);
+        const price = BigInt(parseInt(priceInput.value || '0', 10));
+        if (!t) { show('Nhập token id để tính.', computeResult); return; }
+        const reg = loadRegistry();
+        const entry = reg[t];
+        if (!entry) { show('Không tìm thấy đăng ký cho token này.', computeResult); return; }
+        const bps = BigInt(entry.bps);
+        const royalty = (price * bps) / 10000n;
+        computeResult.innerHTML = `
+          Creator: ${entry.creator} <br/>
+          Price: ${price.toString()} <br/>
+          BPS: ${entry.bps} <br/>
+          Royalty: ${royalty.toString()}
+        `;
+      });
+
+      // list registry
+      const listBtn = document.getElementById('listBtn');
+      const registryDump = document.getElementById('registryDump');
+      listBtn.addEventListener('click', () => {
+        const reg = loadRegistry();
+        registryDump.style.display = 'block';
+        registryDump.textContent = JSON.stringify(reg, null, 2);
+      });
+
+      // Add new registry management functions
+      function updateRegistryTable() {
+        const reg = loadRegistry();
+        const tbody = document.getElementById('registryTableBody');
+        tbody.innerHTML = '';
+        
+        Object.entries(reg).forEach(([token, data]) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${token}</td>
+            <td>${data.creator}</td>
+            <td>${data.bps}</td>
+            <td>
+              <button class="action-btn" onclick="window.editEntry('${token}')">Sửa</button>
+              <button class="action-btn delete-btn" onclick="window.deleteEntry('${token}')">Xóa</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Enhanced edit functionality
+      window.editEntry = (token) => {
+        const reg = loadRegistry();
+        const entry = reg[token];
+        if (!entry) return;
+
+        const form = document.getElementById('editForm');
+        form.style.display = 'block';
+        
+        document.getElementById('oldTokenId').value = token;
+        document.getElementById('editTokenId').value = token;
+        document.getElementById('editCreatorId').value = entry.creator;
+        document.getElementById('editBps').value = entry.bps;
+      };
+
+      // Save changes
+      document.getElementById('saveEditBtn').addEventListener('click', () => {
+        const oldToken = document.getElementById('oldTokenId').value;
+        const newToken = document.getElementById('editTokenId').value;
+        const creator = document.getElementById('editCreatorId').value;
+        const bps = parseInt(document.getElementById('editBps').value);
+
+        if (!newToken || !creator || isNaN(bps)) {
+          alert('Vui lòng điền đầy đủ thông tin hợp lệ');
+          return;
+        }
+
+        const reg = loadRegistry();
+        
+        // Delete old entry if token ID changed
+        if (oldToken !== newToken) {
+          delete reg[oldToken];
+        }
+        
+        // Add/update new entry
+        reg[newToken] = { creator, bps };
+        saveRegistry(reg);
+        
+        document.getElementById('editForm').style.display = 'none';
+        updateRegistryTable();
+      });
+
+      // Cancel edit
+      document.getElementById('cancelEditBtn').addEventListener('click', () => {
+        document.getElementById('editForm').style.display = 'none';
+      });
+
+      // prefill sample
+      (function prefill(){
+        const reg = loadRegistry();
+        if (!reg['my-nft-001']) {
+          reg['my-nft-001'] = { creator: 'GCREATOR_SAMPLE_32', bps: 500 };
+          saveRegistry(reg);
+        }
+        tokenId.value = 'my-nft-001';
+        tokenIdCompute.value = 'my-nft-001';
+      })();
+
+      // Update the prefill function to also update table
+      const originalPrefill = window.prefill;
+      window.prefill = () => {
+        originalPrefill();
+        updateRegistryTable();
+      };
+
+      // Initial table load
+      updateRegistryTable();
+      
+      // Update table when registry changes
+      document.addEventListener('DOMContentLoaded', updateRegistryTable);
+    </script>
+  </body>
+</html>
