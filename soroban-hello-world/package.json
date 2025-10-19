@@ -1,0 +1,13 @@
+{
+    "name": "soroban-hello-world",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "npx astro dev",
+        "build": "astro build",
+        "preview": "astro preview"
+    },
+    "devDependencies": {
+        "astro": "^3.6.0"
+    }
+}
