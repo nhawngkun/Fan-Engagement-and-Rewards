@@ -1,7 +1,7 @@
 
 
 ## Thành viên nhóm 7
--Lê Ngọc Diệp(Leader)
+-Lê Ngọc Diệp
 -Nguyễn Khành Duy
 -Đào Duy Thắng
 
