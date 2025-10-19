@@ -307,6 +307,17 @@
         <pre id="registryDump" style="display:none; margin-top:12px;"></pre>
       </div>
 
+      <!-- NEW: CLI usage / troubleshooting card -->
+      <div class="card">
+        <h2>CLI: Lỗi "unrecognized subcommand 'royalty'" — cách sửa</h2>
+        <p class="description">Lỗi xảy ra vì CLI không có subcommand tên "royalty". Gọi tên hàm hợp lệ của hợp đồng (ví dụ: <code>compute_royalty</code> hoặc <code>register</code>) sau dấu <code>--</code>.</p>
+        <label>Ví dụ đúng (thay ID và tham số theo thực tế):</label>
+        <pre>
+stellar contract invoke --id CAYRK45V7XOAVC6QKO2GAPJ22NO7HKUUY33R4GWM3EAYAPKD47RGFAHJ --source-account alice --network testnet -- compute_royalty &lt;TOKEN_ID&gt; &lt;PRICE&gt; --to RPC
+        </pre>
+        <p class="description">Tóm lại: dùng tên hàm hợp đồng (ví dụ <code>compute_royalty</code>) thay vì <code>royalty</code>.</p>
+      </div>
+
       <div class="card">
         <h2>3. Danh sách đăng ký</h2>
         <div id="editForm" class="edit-form" style="display: none;">
@@ -474,8 +485,8 @@
         document.getElementById('editForm').style.display = 'none';
       });
 
-      // prefill sample
-      (function prefill(){
+      // prefill sample — expose as window.prefill and ensure table updates
+      window.prefill = function() {
         const reg = loadRegistry();
         if (!reg['my-nft-001']) {
           reg['my-nft-001'] = { creator: 'GCREATOR_SAMPLE_32', bps: 500 };
@@ -483,14 +494,11 @@
         }
         tokenId.value = 'my-nft-001';
         tokenIdCompute.value = 'my-nft-001';
-      })();
-
-      // Update the prefill function to also update table
-      const originalPrefill = window.prefill;
-      window.prefill = () => {
-        originalPrefill();
+        // ensure the visual table is refreshed after prefill
         updateRegistryTable();
       };
+      // call it once on load
+      window.prefill();
 
       // Initial table load
       updateRegistryTable();
